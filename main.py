@@ -2,12 +2,24 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 import pandas as pd
-from fastapi import FastAPI, File, UploadFile
-import codecs
+from fastapi import FastAPI
 import json
 import asyncio
+from fastapi.middleware.cors import CORSMiddleware
+import aiohttp
+
 
 app = FastAPI()
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class Search:
@@ -69,7 +81,7 @@ class Search:
 
     def ada(self):
         url = "https://api.adashop.ge/api/v1/products/rest_search/search"
-        payload = {"search": "hyperx"}
+        payload = {"search": self.search_term}
         r = requests.request("POST", url, json=payload)
         num = 0
         with open('output.csv', 'a', encoding='utf-8', newline='') as f:
@@ -147,14 +159,9 @@ def sort():
     print('\nsorted!')
 
 
-@app.get("/posts")
-def posts():
-    return 9
-
-
 @app.post("/search-item/{item}")
 def search(item):
-    Search(item).all()
+    Search(item).zoomer()
     sort()
     df = pd.read_csv('output.csv')
     df.to_json('output.json', indent=1, orient='index')
@@ -163,6 +170,6 @@ def search(item):
         return parsed
 
 
-# Search('keyboard').all()
+# Search('PCie').all()
 # sort()
 
