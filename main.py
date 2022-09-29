@@ -2,12 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 import pandas as pd
-from fastapi import FastAPI, File, UploadFile
-import codecs
-import json
-import asyncio
-
-app = FastAPI()
 
 
 class Search:
@@ -69,7 +63,7 @@ class Search:
 
     def ada(self):
         url = "https://api.adashop.ge/api/v1/products/rest_search/search"
-        payload = {"search": "hyperx"}
+        payload = {"search": self.search_term}
         r = requests.request("POST", url, json=payload)
         num = 0
         with open('output.csv', 'a', encoding='utf-8', newline='') as f:
@@ -134,35 +128,28 @@ class Search:
         self.ada()
         self.zoomer()
 
-def sort():
-    df = pd.read_csv("output.csv")
-    try:
-        df['price'] = df['price'].astype(str).str.strip()
-        df['price'] = df['price'].astype(str).str.replace(' ', '')
-        df['price'] = df['price'].astype(int)
-    except ValueError:
-        df['price'] = df['price'].astype(float).astype(int)    
-    df = df.sort_values(by="price")
-    df.to_csv("output.csv", index=False)
-    print('\nsorted!')
+
+def sort(decision: bool):
+    if decision == True:
+        df = pd.read_csv("output.csv")
+        try:
+            df['price'] = df['price'].astype(str).str.strip()
+            df['price'] = df['price'].astype(str).str.replace(' ', '')
+            df['price'] = df['price'].astype(int)
+        except ValueError:
+            df['price'] = df['price'].astype(float).astype(int)
+        df = df.sort_values(by="price")
+        df.to_csv("output.csv", index=False)
+        print('\nsorted!')
+    elif decision == False:
+        return
 
 
-@app.get("/posts")
-def posts():
-    return 9
+choice = input('Search Term: ')
+sortq = input('Do you want to sort output by price?(y/n): ')
+Search(choice).all()
 
-
-@app.post("/search-item/{item}")
-def search(item):
-    Search(item).all()
-    sort()
-    df = pd.read_csv('output.csv')
-    df.to_json('output.json', indent=1, orient='index')
-    with open('output.json') as jf:
-        parsed = json.load(jf)
-        return parsed
-
-
-# Search('keyboard').all()
-# sort()
-
+if sortq.lower() in ['y', 'yes']:
+    sort(True)
+elif sortq.lower() in ['n', 'no']:
+    sort(False)
