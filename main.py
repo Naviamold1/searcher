@@ -63,7 +63,7 @@ class Search:
 
     def ada(self):
         url = "https://api.adashop.ge/api/v1/products/rest_search/search"
-        payload = {"search": "hyperx"}
+        payload = {"search": self.search_term}
         r = requests.request("POST", url, json=payload)
         num = 0
         with open('output.csv', 'a', encoding='utf-8', newline='') as f:
