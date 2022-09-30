@@ -8,19 +8,23 @@
   </a>
 </p>
 
-> Search multiple Georgian websites at once
+> API for Searching multiple Georgian Websites at once
+
+If you want to search without using app click <a href=>here
 
 ## Install
 
 ```sh
 git clone https://github.com/Naviamold1/searcher-ge.git
 cd searcher-ge
+pip install -r requirements.txt
+uvicorn main:app --reload
 ```
 
 ## Usage
 
 ```sh
-python main.py
+localhost:8800/docs (or whatever it is for you)
 ```
 
 ## Author

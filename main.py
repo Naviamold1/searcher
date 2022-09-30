@@ -2,6 +2,25 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 import pandas as pd
+from fastapi import FastAPI
+import json
+import asyncio
+from fastapi.middleware.cors import CORSMiddleware
+import aiohttp
+
+
+app = FastAPI()
+
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class Search:
