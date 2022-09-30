@@ -159,6 +159,7 @@ def sort():
     print('\nsorted!')
 
 
+
 @app.post("/search-item/{item}")
 def search(item):
     Search(item).zoomer()
@@ -172,4 +173,7 @@ def search(item):
 
 # Search('PCie').all()
 # sort()
+
+
+sort()
 
