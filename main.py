@@ -2,15 +2,33 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 import pandas as pd
+from fastapi import FastAPI
+import json
+import asyncio
+from fastapi.middleware.cors import CORSMiddleware
+import aiohttp
+
+
+app = FastAPI()
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class Search:
-    def __init__(self, search_term, sorting):
+    def __init__(self, search_term):
         self.search_term = search_term
         with open('output.csv', 'w', encoding='utf-8', newline='') as f:
             writer = csv.writer(
                 f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            writer.writerow(['Store', 'Number', 'Name', 'price', 'Link'])
+            writer.writerow(['Store', 'Name', 'price', 'Link'])
 
     def alta(self):
         url = f'https://alta.ge/?subcats=Y&pcode_from_q=Y&pshort=Y&pfull=Y&pname=Y&pkeywords=Y&search_performed=Y&q={self.search_term}&dispatch=products.search&items_per_page=1000'
@@ -29,7 +47,7 @@ class Search:
                 link = product.find('a', class_='product-title').get('href')
                 amount = price.text.strip()
                 output = f"Alta | {num} | {name} | {amount}₾ | {link}"
-                writer.writerow(["Alta", num, name, f"{amount}", link])
+                writer.writerow(["Alta", name, f"{amount}", link])
                 print(output)
 
     def ee(self):
@@ -58,7 +76,7 @@ class Search:
                 c = item["product_slug_gr"]
                 output = f'Elit | {num} | {item["product_name"]} | {item["actual_price"]}₾ | https://ee.ge/{a}/{b}/{c}'
                 writer.writerow(
-                    ['Elit', num, item["product_name"], f'{item["actual_price"]}', f'https://ee.ge/{a}/{b}/{c}'])
+                    ['Elit', item["product_name"], f'{item["actual_price"]}', f'https://ee.ge/{a}/{b}/{c}'])
                 print(output)
 
     def ada(self):
@@ -72,7 +90,7 @@ class Search:
             for item in r.json()["searched_products"]:
                 num += 1
                 output = f'Ada | {num} | {item["product_name"]} | {item["price_with_price_tag"]}₾ | https://adashop.ge/product/{item["_id"]}'
-                writer.writerow(['Ada', num, item["product_name"],
+                writer.writerow(['Ada', item["product_name"],
                                 f'{item["price_with_price_tag"]}', f'https://adashop.ge/product/{item["_id"]}'])
                 print(output)
 
@@ -82,7 +100,8 @@ class Search:
         soup = BeautifulSoup(r.content, 'html.parser')
         products = soup.find_all('h4')
         prices = soup.find_all('div', attrs={'class': 'product_new_price'})
-        links = soup.find_all('a', attrs={'class': 'carousel-inner product_link'})
+        links = soup.find_all(
+            'a', attrs={'class': 'carousel-inner product_link'})
         num = 0
         with open('output.csv', 'a', encoding='utf-8', newline='') as f:
             writer = csv.writer(
@@ -93,7 +112,7 @@ class Search:
                 cost = price.text.strip().replace('₾', '')
                 domain = link.get('href')
                 output = f'Zoomer | {num} | {name} | {cost} | https://zoommer.ge{domain}'
-                writer.writerow(["Zoomer", num, name, cost,
+                writer.writerow(["Zoomer", name, cost,
                                 f'https://zoommer.ge{domain}'])
                 print(output)
 
@@ -106,7 +125,8 @@ class Search:
                 products1 = soup1.find_all('h4')
                 prices1 = soup1.find_all(
                     'div', attrs={'class': 'product_new_price'})
-                links1 = soup1.find_all('a', attrs={'class': 'carousel-inner product_link'})
+                links1 = soup1.find_all(
+                    'a', attrs={'class': 'carousel-inner product_link'})
             with open('output.csv', 'a', encoding='utf-8', newline='') as f1:
                 writer1 = csv.writer(
                     f1, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -117,7 +137,7 @@ class Search:
                     domain1 = link1.get('href')
                     output1 = f'Zoomer | {num} | {name1} | {cost1} | https://zoommer.ge{domain1}'
                     writer1.writerow(
-                        ["Zoomer", num, name1, cost1, f'https://zoommer.ge{domain1}'])
+                        ["Zoomer", name1, cost1, f'https://zoommer.ge{domain1}'])
                     print(output1)
 
     def all(self):
@@ -128,13 +148,32 @@ class Search:
 
 def sort():
     df = pd.read_csv("output.csv")
-    df['price'] = df['price'].astype(str).str.strip()
-    df['price'] = df['price'].astype(str).str.replace(' ', '')
-    df['price'] = df['price'].astype(int)
+    try:
+        df['price'] = df['price'].astype(str).str.strip()
+        df['price'] = df['price'].astype(str).str.replace(' ', '')
+        df['price'] = df['price'].astype(int)
+    except ValueError:
+        df['price'] = df['price'].astype(float).astype(int)    
     df = df.sort_values(by="price")
     df.to_csv("output.csv", index=False)
     print('\nsorted!')
 
-Search('keyboard').zoomer()
+
+
+@app.post("/search-item/{item}")
+def search(item):
+    Search(item).zoomer()
+    sort()
+    df = pd.read_csv('output.csv')
+    df.to_json('output.json', indent=1, orient='index')
+    with open('output.json') as jf:
+        parsed = json.load(jf)
+        return parsed
+
+
+# Search('PCie').all()
+# sort()
+
 
 sort()
+
