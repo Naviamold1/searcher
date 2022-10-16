@@ -1,13 +1,16 @@
+import asyncio
+import csv
+import json
+import time
+
+import aiohttp
+import cloudscraper
+import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-import csv
-import pandas as pd
 from fastapi import FastAPI
-import json
-import asyncio
 from fastapi.middleware.cors import CORSMiddleware
-import aiohttp
-
+from fastapi.responses import *
 
 app = FastAPI()
 
@@ -28,7 +31,7 @@ class Search:
         with open('output.csv', 'w', encoding='utf-8', newline='') as f:
             writer = csv.writer(
                 f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            writer.writerow(['Store', 'Name', 'price', 'Link'])
+            writer.writerow(['store', 'name', 'price', 'link', 'image', 'id'])
 
     def alta(self):
         url = f'https://alta.ge/?subcats=Y&pcode_from_q=Y&pshort=Y&pfull=Y&pname=Y&pkeywords=Y&search_performed=Y&q={self.search_term}&dispatch=products.search&items_per_page=1000'
@@ -37,6 +40,7 @@ class Search:
         products = soup.find_all('div', attrs={'class': 'ty-column3'})
         tags = soup.find_all('a', attrs={'class': 'product-title'})
         prices = soup.find_all('span', attrs={'class': 'ty-price-num'})
+        # images = soup.find_all('img', attrs={'class': 'ty-pict    '})
         num = 0
         with open('output.csv', 'a', encoding='utf-8', newline='') as f:
             writer = csv.writer(
@@ -46,7 +50,8 @@ class Search:
                 name = tag.text.strip()
                 link = product.find('a', class_='product-title').get('href')
                 amount = price.text.strip()
-                output = f"Alta | {num} | {name} | {amount}₾ | {link}"
+                # thumbnail = image['src']
+                output = f"Alta | {num} | {name} | {amount}₾ | {link} | "
                 writer.writerow(["Alta", name, f"{amount}", link])
                 print(output)
 
@@ -76,7 +81,7 @@ class Search:
                 c = item["product_slug_gr"]
                 output = f'Elit | {num} | {item["product_name"]} | {item["actual_price"]}₾ | https://ee.ge/{a}/{b}/{c}'
                 writer.writerow(
-                    ['Elit', item["product_name"], f'{item["actual_price"]}', f'https://ee.ge/{a}/{b}/{c}'])
+                    ['Elit', item["product_desc"], f'{item["actual_price"]}', f'https://ee.ge/{a}/{b}/{c}', item['image']])
                 print(output)
 
     def ada(self):
@@ -91,7 +96,7 @@ class Search:
                 num += 1
                 output = f'Ada | {num} | {item["product_name"]} | {item["price_with_price_tag"]}₾ | https://adashop.ge/product/{item["_id"]}'
                 writer.writerow(['Ada', item["product_name"],
-                                f'{item["price_with_price_tag"]}', f'https://adashop.ge/product/{item["_id"]}'])
+                                f'{item["price_with_price_tag"]}', f'https://adashop.ge/product/{item["_id"]}', f'https://adashop.ge/_next/image?url=http://localhost:5000/products/{item["product_image"]}&w=640&q=75'])
                 print(output)
 
     def zoomer(self):
@@ -99,9 +104,11 @@ class Search:
         r = requests.get(url)
         soup = BeautifulSoup(r.content, 'html.parser')
         products = soup.find_all('h4')
-        prices = soup.find_all('div', attrs={'class': 'product_new_price'})
+        prices = soup.find_all('div', {'class': 'product_new_price'})
         links = soup.find_all(
             'a', attrs={'class': 'carousel-inner product_link'})
+        # images = soup.find_all(
+        #     'img', attrs={'class': 'd-block w-100 product_img lazy_load initial loaded'})
         num = 0
         with open('output.csv', 'a', encoding='utf-8', newline='') as f:
             writer = csv.writer(
@@ -146,26 +153,36 @@ class Search:
         self.ada()
         self.zoomer()
 
+    def test1():
+        r = requests.get('ngiwebgew.com')
+
+
 def sort():
     df = pd.read_csv("output.csv")
+    df['id'] = df.index
     try:
         df['price'] = df['price'].astype(str).str.strip()
         df['price'] = df['price'].astype(str).str.replace(' ', '')
         df['price'] = df['price'].astype(int)
     except ValueError:
-        df['price'] = df['price'].astype(float).astype(int)    
-    df = df.sort_values(by="price")
+        df['price'] = df['price'].astype(float).astype(int)
+    # df = df.sort_values(by="price")
     df.to_csv("output.csv", index=False)
     print('\nsorted!')
 
 
 @app.post("/search-item/{item}")
 def search(item):
-    Search(item).zoomer()
+    Search(item).ada()
     sort()
     df = pd.read_csv('output.csv')
-    df.to_json('output.json', indent=1, orient='index')
+    df.to_json('output.json', orient='records')
     with open('output.json') as jf:
         parsed = json.load(jf)
+        print(parsed)
         return parsed
 
+
+@app.get("/")
+async def main():
+    return RedirectResponse(url='/docs')
