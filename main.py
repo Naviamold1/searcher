@@ -181,8 +181,3 @@ def search(item):
         parsed = json.load(jf)
         print(parsed)
         return parsed
-
-
-@app.get("/")
-async def main():
-    return RedirectResponse(url='/docs')
