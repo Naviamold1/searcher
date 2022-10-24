@@ -10,7 +10,7 @@
 
 > API for Searching multiple Georgian Websites at once
 
-If you want to search without using app click <a href=>here
+If you want to search with an app click [here](https://github.com/Naviamold1/searcher-app)
 
 ## Install
 
