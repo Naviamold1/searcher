@@ -173,7 +173,7 @@ def sort():
 
 @app.post("/search-item/{item}")
 def search(item):
-    Search(item).ada()
+    Search(item).ee()
     sort()
     df = pd.read_csv('output.csv')
     df.to_json('output.json', orient='records')
