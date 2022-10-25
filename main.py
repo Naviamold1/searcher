@@ -94,9 +94,9 @@ class Search:
                 f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             for item in r.json()["searched_products"]:
                 num += 1
-                output = f'Ada | {num} | {item["product_name"]} | {item["price_with_price_tag"]}₾ | https://adashop.ge/product/{item["_id"]}'
-                writer.writerow(['Ada', item["product_name"],
-                                f'{item["price_with_price_tag"]}', f'https://adashop.ge/product/{item["_id"]}', f'https://adashop.ge/_next/image?url=http://localhost:5000/products/{item["product_image"]}&w=640&q=75'])
+                output = f'Ada | {num} | {item["name"]} | {item["price_with_price_tag"]}₾ | https://adashop.ge/product/{item["_id"]}'
+                writer.writerow(['Ada', item["name"],
+                                f'{item["price_with_price_tag"]}', f'https://adashop.ge/product/{item["_id"]}', f'https://adashop.ge/_next/image?url=http%3A%2F%2Flocalhost%3A5001%2Fimages%2Fproducts%2F{item["image"]}&w=640&q=75'])
                 print(output)
 
     def zoomer(self):
@@ -173,7 +173,7 @@ def sort():
 
 @app.post("/search-item/{item}")
 def search(item):
-    Search(item).ee()
+    Search(item).ada()
     sort()
     df = pd.read_csv('output.csv')
     df.to_json('output.json', orient='records')
