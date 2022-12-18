@@ -20,8 +20,9 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["POST", "GET"],
     allow_headers=["*"],
+    max_age=3600,
 )
 
 
@@ -43,6 +44,7 @@ class Search:
         # images = soup.find_all('img', attrs={'class': 'ty-pict    '})
         num = 0
         with open('output.csv', 'a', encoding='utf-8', newline='') as f:
+            output = ''
             writer = csv.writer(
                 f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             for product, tag, price in zip(products, tags, prices):
@@ -72,6 +74,7 @@ class Search:
         r = requests.request("POST", url, json=payload)
         num = 0
         with open('output.csv', 'a', encoding='utf-8', newline='') as f:
+            output = ''
             writer = csv.writer(
                 f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             for item in r.json()["data"]:
@@ -80,7 +83,8 @@ class Search:
                 b = item["category_slug_gr"]
                 c = item["product_slug_gr"]
                 output = 'Elit', item["product_desc"], f'{item["actual_price"]}', f'https://ee.ge/{a}/{b}/{c}', item['image']
-                writer.writerow(['Elit', item["product_desc"], f'{item["actual_price"]}', f'https://ee.ge/{a}/{b}/{c}', item['image']])
+                writer.writerow(['Elit', item["product_desc"],
+                                f'{item["actual_price"]}', f'https://ee.ge/{a}/{b}/{c}', item['image']])
             return output
 
     def ada(self):
@@ -89,12 +93,14 @@ class Search:
         r = requests.request("POST", url, json=payload)
         num = 0
         with open('output.csv', 'a', encoding='utf-8', newline='') as f:
+            output = ''
             writer = csv.writer(
                 f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             for item in r.json()["searched_products"]:
                 num += 1
                 output = 'Ada', item["name"], f'{item["price_with_price_tag"]}', f'https://adashop.ge/product/{item["_id"]}', f'https://adashop.ge/_next/image?url=http%3A%2F%2Flocalhost%3A5001%2Fimages%2Fproducts%2F{item["image"]}&w=640&q=75'
-                writer.writerow(['Ada', item["name"], f'{item["price_with_price_tag"]}', f'https://adashop.ge/product/{item["_id"]}', f'https://adashop.ge/_next/image?url=http%3A%2F%2Flocalhost%3A5001%2Fimages%2Fproducts%2F{item["image"]}&w=640&q=75'])
+                writer.writerow(['Ada', item["name"], f'{item["price_with_price_tag"]}', f'https://adashop.ge/product/{item["_id"]}',
+                                f'https://adashop.ge/_next/image?url=http%3A%2F%2Flocalhost%3A5001%2Fimages%2Fproducts%2F{item["image"]}&w=640&q=75'])
             return output
 
     def zoomer(self):
@@ -116,8 +122,9 @@ class Search:
                 cost = price.text.strip().replace('₾', '')
                 domain = link.get('href')
                 output = "Zoomer", name, cost, f'https://zoommer.ge{domain}'
-                writer.writerow(["Zoomer", name, cost, f'https://zoommer.ge{domain}'])
-                
+                writer.writerow(
+                    ["Zoomer", name, cost, f'https://zoommer.ge{domain}'])
+
         # imgsoup = BeautifulSoup(r.text, 'xml')
         # images = imgsoup.find_all(
         #     'img', {'class': 'd-block w-100 product_img'})
@@ -150,7 +157,6 @@ class Search:
                     output1 = f'Zoomer | {num} | {name1} | {cost1} | https://zoommer.ge{domain1}'
                     writer1.writerow(
                         ["Zoomer", name1, cost1, f'https://zoommer.ge{domain1}'])
-                  
 
     def all(self):
         self.alta()
@@ -190,23 +196,29 @@ def sort():
 
 @app.post("/search-item")
 async def search(item: str, store: str | None = None):
-    if store in ['alta', 'Alta']:
-        Search(item).alta()
-    if store in ['ee', 'EE', 'Elit', 'Elit Electronics']:
-        Search(item).ee()
-    if store in ['ada', 'Ada', 'Adashop', 'AdaShop', 'adashop', 'adaShop']:
-        Search(item).ada()
-    if store in ['zoomer', 'Zoomer']:
-        Search(item).zoomer()
-    if store in [None, 'all', 'All']:
-        Search(item).all()
-    if store == 'test1':
-        Search(item).test1()
+    fsearch = Search(item)
+    if store is not None:
+        store = store.replace(' ', '')
+        store = store.split(',')
+        options = {
+            'alta': fsearch.alta,
+            'ee': fsearch.ee,
+            'elitelectronics': fsearch.ee,
+            'ada': fsearch.ada,
+            'adashop': fsearch.ada,
+            'zoomer': fsearch.zoomer,
+            'all': fsearch.all,
+            "test1": fsearch.test1,
+        }
+        for thing in store:
+            thing = thing.lower()
+            options[thing]()
+    elif store is None:
+        fsearch.all()
 
     sort()
     df = pd.read_csv('output.csv')
     df.to_json('output.json', orient='records')
     with open('output.json') as jf:
         parsed = json.load(jf)
-        print(parsed)
         return parsed
