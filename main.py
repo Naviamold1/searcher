@@ -2,7 +2,7 @@ import asyncio
 import csv
 import json
 import time
-
+from typing import Union
 import aiohttp
 import pandas as pd
 import pymongo
@@ -195,7 +195,7 @@ def sort():
 
 
 @app.post("/search-item")
-async def search(item: str, store: str | None = None):
+async def search(item: str, store: Union[str, None] = None):
     fsearch = Search(item)
     if store is not None:
         store = store.replace(' ', '')
