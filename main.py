@@ -179,10 +179,10 @@ def sort():
     print('\nsorted!')
 
 
-@app.get("/")
-async def redirect():
-    response = RedirectResponse(url='/docs')
-    return response
+# @app.get("/")
+# async def redirect():
+#     response = RedirectResponse(url='/docs')
+#     return response
 
 
 @app.post("/search-item")
