@@ -34,31 +34,33 @@ class Search:
     def __init__(self, search_term, ada_precise: bool = False):
         self.search_term = search_term
         self.ada_precise = ada_precise
-        with open('output.csv', 'w', encoding='utf-8', newline='') as f:
+        with open("output.csv", "w", encoding="utf-8", newline="") as f:
             writer = csv.writer(
-                f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            writer.writerow(['store', 'name', 'price', 'link', 'image', 'id'])
+                f, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
+            )
+            writer.writerow(["store", "name", "price", "link", "image", "id"])
 
     def alta(self):
-        url = f'https://alta.ge/?subcats=Y&pcode_from_q=Y&pshort=Y&pfull=Y&pname=Y&pkeywords=Y&search_performed=Y&q={self.search_term}&dispatch=products.search&items_per_page=1000'
+        url = f"https://alta.ge/?subcats=Y&pcode_from_q=Y&pshort=Y&pfull=Y&pname=Y&pkeywords=Y&search_performed=Y&q={self.search_term}&dispatch=products.search&items_per_page=1000"
         r = requests.get(url.format(search_term=self.search_term))
-        soup = BeautifulSoup(r.content, 'html.parser')
-        products = soup.find_all('div', attrs={'class': 'ty-column3'})
-        tags = soup.find_all('a', attrs={'class': 'product-title'})
-        prices = soup.find_all('span', attrs={'class': 'ty-price-num'})
-        images = soup.find_all('img', attrs={'class': 'ty-pict'})
+        soup = BeautifulSoup(r.content, "html.parser")
+        products = soup.find_all("div", attrs={"class": "ty-column3"})
+        tags = soup.find_all("a", attrs={"class": "product-title"})
+        prices = soup.find_all("span", attrs={"class": "ty-price-num"})
+        images = soup.find_all("img", attrs={"class": "ty-pict"})
         num = 0
-        with open('output.csv', 'a', encoding='utf-8', newline='') as f:
-            output = ''
+        with open("output.csv", "a", encoding="utf-8", newline="") as f:
+            output = ""
             writer = csv.writer(
-                f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+                f, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
+            )
             for product, tag, price, image in zip(products, tags, prices, images):
                 num += 1
                 name = tag.text.strip()
-                link = product.find('a', class_='product-title').get('href')
+                link = product.find("a", class_="product-title").get("href")
                 amount = price.text.strip()
                 try:
-                    thumbnail = image['src']
+                    thumbnail = image["src"]
                 except KeyError:
                     continue
                 output = ["Alta", name, f"{amount}", link, thumbnail]
@@ -77,21 +79,27 @@ class Search:
             "search_text": self.search_term,
             "sale_products": 0,
             "slug": "",
-            "pageno": ""
+            "pageno": "",
         }
         r = requests.request("POST", url, json=payload)
         num = 0
-        with open('output.csv', 'a', encoding='utf-8', newline='') as f:
-            output = ''
+        with open("output.csv", "a", encoding="utf-8", newline="") as f:
+            output = ""
             writer = csv.writer(
-                f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+                f, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
+            )
             for item in r.json()["data"]:
                 num += 1
                 a = item["parent_category_slug_gr"]
                 b = item["category_slug_gr"]
                 c = item["product_slug_gr"]
-                output = ['Elit', item["product_desc"],
-                          f'{item["actual_price"]}', f'https://ee.ge/{a}/{b}/{c}', item['image']]
+                output = [
+                    "Elit",
+                    item["product_desc"],
+                    f'{item["actual_price"]}',
+                    f"https://ee.ge/{a}/{b}/{c}",
+                    item["image"],
+                ]
                 writer.writerow(output)
             return output
 
@@ -100,45 +108,54 @@ class Search:
         payload = {"search": self.search_term}
         r = requests.request("POST", url, json=payload)
         num = 0
-        with open('output.csv', 'a', encoding='utf-8', newline='') as f:
+        with open("output.csv", "a", encoding="utf-8", newline="") as f:
             output = ""
             writer = csv.writer(
-                f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+                f, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
+            )
             for item in r.json()["searched_products"]:
                 num += 1
-                if self.ada_precise is False or (str(self.search_term).lower() in str(item["name"]).lower() or str(item["name"]).lower() in str(self.search_term).lower()):
-                    output = ['Ada', item["name"], f'{item["price_with_price_tag"]}', f'https://adashop.ge/product/{item["_id"]}',
-                              f'https://adashop.ge/_next/image?url=http%3A%2F%2Flocalhost%3A5001%2Fimages%2Fproducts%2F{item["image"]}&w=640&q=75']
+                if self.ada_precise is False or (
+                    str(self.search_term).lower() in str(item["name"]).lower()
+                    or str(item["name"]).lower() in str(self.search_term).lower()
+                ):
+                    output = [
+                        "Ada",
+                        item["name"],
+                        f'{item["price_with_price_tag"]}',
+                        f'https://adashop.ge/product/{item["_id"]}',
+                        f'https://adashop.ge/_next/image?url=http%3A%2F%2Flocalhost%3A5001%2Fimages%2Fproducts%2F{item["image"]}&w=640&q=75',
+                    ]
                     writer.writerow(output)
             return output
 
     def zoomer(self):
-        page = f'https://zoommer.ge/search?q={self.search_term}&CategoryIds=0'
+        page = f"https://zoommer.ge/search?q={self.search_term}&CategoryIds=0"
         while page:
             r = requests.get(page)
-            soup = BeautifulSoup(r.content, 'html.parser')
+            soup = BeautifulSoup(r.content, "html.parser")
             images = soup.find_all(
-                'img', {'class': 'd-block w-100 product_img lazy_load'})
+                "img", {"class": "d-block w-100 product_img lazy_load"}
+            )
             # for image in images:
             #     data = {'image': [image['data-src']]}
             #     df = pd.DataFrame(data)
             #     df.to_csv('output.csv', mode='a', index=False)
-            products = soup.find_all('h4')
-            prices = soup.find_all('div', {'class': 'product_new_price'})
-            links = soup.find_all(
-                'a', attrs={'class': 'carousel-inner product_link'})
+            products = soup.find_all("h4")
+            prices = soup.find_all("div", {"class": "product_new_price"})
+            links = soup.find_all("a", attrs={"class": "carousel-inner product_link"})
             num = 0
-            with open('output.csv', 'a', encoding='utf-8', newline='') as f:
+            with open("output.csv", "a", encoding="utf-8", newline="") as f:
                 writer = csv.writer(
-                    f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+                    f, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
+                )
                 for product, price, link, image in zip(products, prices, links, images):
                     num += 1
-                    name = product['title']
-                    cost = price.text.strip().replace('₾', '')
-                    domain = link.get('href')
-                    data = image['data-src']
-                    output = ["Zoomer", name, cost,
-                              f'https://zoommer.ge{domain}', data]
+                    name = product["title"]
+                    cost = price.text.strip().replace("₾", "")
+                    domain = link.get("href")
+                    data = image["data-src"]
+                    output = ["Zoomer", name, cost, f"https://zoommer.ge{domain}", data]
                     writer.writerow(output)
             page = soup.find("a", {"class": "show_more_btn"})
             if page:
@@ -152,31 +169,39 @@ class Search:
 
     def test1(self):
         client = pymongo.MongoClient(os.getenv("DB_SECRET"))
-        db = client['searcher']
+        db = client["searcher"]
         posts = db.requests
-        collection = posts.find({'store': self.search_term})
-        if self.search_term == '':
+        collection = posts.find({"store": self.search_term})
+        if self.search_term == "":
             collection = posts.find({})
         for item in collection:
-            with open('output.csv', 'a', encoding='utf-8', newline='') as f:
+            with open("output.csv", "a", encoding="utf-8", newline="") as f:
                 writer = csv.writer(
-                    f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-                writer.writerow([item['store'], item['name'],
-                                item['price'], item['link'], item['image']])
+                    f, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
+                )
+                writer.writerow(
+                    [
+                        item["store"],
+                        item["name"],
+                        item["price"],
+                        item["link"],
+                        item["image"],
+                    ]
+                )
 
 
 def sort():
     df = pd.read_csv("output.csv")
-    df['id'] = df.index
+    df["id"] = df.index
     try:
-        df['price'] = df['price'].astype(str).str.strip()
-        df['price'] = df['price'].astype(str).str.replace(' ', '')
-        df['price'] = df['price'].astype(int)
+        df["price"] = df["price"].astype(str).str.strip()
+        df["price"] = df["price"].astype(str).str.replace(" ", "")
+        df["price"] = df["price"].astype(int)
     except ValueError:
-        df['price'] = df['price'].astype(float).astype(int)
+        df["price"] = df["price"].astype(float).astype(int)
     # df = df.sort_values(by="price")
     df.to_csv("output.csv", index=False)
-    print('\nsorted!')
+    print("\nsorted!")
 
 
 # @app.get("/")
@@ -189,16 +214,16 @@ def sort():
 async def search(item: str, store: str | None = None, ada_accuracy: bool | None = None):
     fsearch = Search(item, ada_accuracy)
     if store is not None:
-        store = store.replace(' ', '')
-        store = store.split(',')
+        store = store.replace(" ", "")
+        store = store.split(",")
         options = {
-            'alta': fsearch.alta,
-            'ee': fsearch.ee,
-            'elitelectronics': fsearch.ee,
-            'ada': fsearch.ada,
-            'adashop': fsearch.ada,
-            'zoomer': fsearch.zoomer,
-            'all': fsearch.all,
+            "alta": fsearch.alta,
+            "ee": fsearch.ee,
+            "elitelectronics": fsearch.ee,
+            "ada": fsearch.ada,
+            "adashop": fsearch.ada,
+            "zoomer": fsearch.zoomer,
+            "all": fsearch.all,
             "test1": fsearch.test1,
         }
         for thing in store:
@@ -208,8 +233,8 @@ async def search(item: str, store: str | None = None, ada_accuracy: bool | None 
         fsearch.all()
 
     sort()
-    df = pd.read_csv('output.csv')
-    df.to_json('output.json', orient='records')
-    with open('output.json') as jf:
+    df = pd.read_csv("output.csv")
+    df.to_json("output.json", orient="records")
+    with open("output.json") as jf:
         parsed = json.load(jf)
         return parsed
