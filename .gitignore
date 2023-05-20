@@ -157,3 +157,4 @@ cython_debug/
 
 test.py
 .vercel
+logs/
