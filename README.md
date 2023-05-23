@@ -15,10 +15,20 @@ Built with [scrapy](https://scrapy.org/)
 
 ## Install
 
+### Using Pip
+
 ```bash
 git clone https://github.com/Naviamold1/searcher-ge.git
 cd searcher-ge
 pip install -r requirements.txt
+```
+
+### Using [Pipenv](https://pipenv.pypa.io/en/latest/)
+
+```bash
+git clone https://github.com/Naviamold1/searcher-ge.git
+cd searcher-ge
+pipenv install
 ```
 
 ## Usage
@@ -81,7 +91,7 @@ Example full url
 localhost:9080/crawl.json?start_requests=true&spider_name=ee&crawl_arg={"search_term":"iphone"
 ```
 
-btw you can also specify scrapyrt port by doing this
+### You can specify scrapyrt port by doing this
 
 ```sh
 scrapyrt -p <port>
