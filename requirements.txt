@@ -30,12 +30,14 @@ requests==2.30.0
 requests-file==1.5.1
 Scrapy==2.9.0
 scrapy-fake-useragent==1.4.4
+scrapy-rotating-proxies==0.6.2
 scrapyrt==0.13.0
 service-identity==21.1.0
 six==1.16.0
 tldextract==3.4.4
 Twisted==22.10.0
 twisted-iocpsupport==1.0.3
+typing==3.7.4.3
 typing_extensions==4.5.0
 urllib3==2.0.2
 w3lib==2.1.1

@@ -26,12 +26,14 @@ pip install -r requirements.txt
 run this template command
 
 ```sh
-scrapy crawl <store> -o output.json -a search_term="<product>"
+scrapy crawl <store> -o <filename>.<json|csv|xml> -a search_term="<product>"
 ```
 
 replace **`<store>`** with the store name like: `ee, ada or zoommer`
 
-also replace **`"<product>"`** with an name of a product you are searching for (e.g iphone)
+replace `filename` with the name you want your file to be and choose either `json, csv or xml` as the file extension.
+
+replace **`"<product>"`** with an name of a product you are searching for (e.g iphone)
 
 p.s alta broken rn.
 
@@ -40,6 +42,16 @@ Example full command
 ```sh
 scrapy crawl zoommer -o output.json -a search_term="apple watch"
 ```
+
+## Proxies
+
+If you want to scrape with proxies:
+
+1. Create `proxies.txt` file in the root folder.
+2. Fill it with your proxies.
+
+Thats it.
+And no I DON'T provide proxies, you will have to find them on your own.
 
 ## API
 
