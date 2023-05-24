@@ -57,8 +57,9 @@ scrapy crawl zoommer -o output.json -a search_term="apple watch"
 
 If you want to scrape with proxies:
 
-1. Create `proxies.txt` file in the root folder.
-2. Fill it with your proxies.
+1. go to [searcher\settings.py](https://github.com/Naviamold1/searcher/blob/d43be643de89297f834276af9ce3482138ff3735/searcher/settings.py) scroll down until you see `DOWNLOADER_MIDDLEWARES` option and uncomment the rotating.proxie lines.
+2. Create `proxies.txt` file in the root folder.
+3. Fill it with your proxies.
 
 Thats it.
 And no I DON'T provide proxies, you will have to find them on your own.

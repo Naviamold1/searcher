@@ -10,6 +10,7 @@ scrapy-fake-useragent = "*"
 scrapy-rotating-proxies = "*"
 
 [dev-packages]
+pylint = "*"
 
 [requires]
 python_version = "3.11"
