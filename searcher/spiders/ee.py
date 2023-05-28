@@ -31,12 +31,12 @@ class EeSpider(scrapy.Spider):
 
     def parse(self, response):
         for product in response.json()["data"]:
-            a = product["parent_category_slug_gr"]
-            b = product["category_slug_gr"]
-            c = product["product_slug_gr"]
-            yield {
-                "title": product["product_desc"],
-                "price": float(product["actual_price"]),
-                "link": f"https://ee.ge/{a}/{b}/{c}",
-                "images": product["image"],
-            }
+            try:
+                yield {
+                    "title": product["product_desc"],
+                    "price": float(product["actual_price"]),
+                    "link": f'https://ee.ge/{product["parent_category_slug_gr"]}/{product["category_slug_gr"]}/{product["product_slug_gr"]}',
+                    "images": product["image"],
+                }
+            except:
+                continue

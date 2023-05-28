@@ -1,9 +1,10 @@
-FROM python:3.11.3
+FROM python:3.11.3-slim
 
 WORKDIR /app
 
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
+
 COPY . .
 
-RUN python -m pip install -r requirements.txt
-
-CMD [ "scrapyrt", "-i", "0.0.0.0", "-p", "8080" ]
+# CMD [ "scrapyrt", "-i", "0.0.0.0", "-p", "8080" ]

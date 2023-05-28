@@ -1,0 +1,9 @@
+version: '3'
+services:
+  scrapy:
+    build: .
+  scrapyrt:
+    image: scrapinghub/scrapyrt
+    ports:
+      - "9080:9080"
+    
