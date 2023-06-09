@@ -1,4 +1,4 @@
-FROM python:3.11.3-slim
+FROM python:3-alpine
 
 WORKDIR /app
 
@@ -7,4 +7,6 @@ RUN pip3 install -r requirements.txt
 
 COPY . .
 
-# CMD [ "scrapyrt", "-i", "0.0.0.0", "-p", "8080" ]
+EXPOSE 8080
+
+CMD [ "scrapyrt", "-i", "0.0.0.0", "-p", "8080" ]

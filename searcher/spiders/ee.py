@@ -6,7 +6,7 @@ import scrapy
 class EeSpider(scrapy.Spider):
     name = "ee"
     allowed_domains = ["api.ee.ge"]
-    start_urls = ["https://api.ee.ge/07072022/product/filter_products"]
+    start_urls = ["https://api.ee.ge/product/filter_products"]
 
     def start_requests(self):
         payload = {
@@ -22,7 +22,7 @@ class EeSpider(scrapy.Spider):
             "pageno": "",
         }
         yield scrapy.Request(
-            "https://api.ee.ge/07072022/product/filter_products",
+            "https://api.ee.ge/product/filter_products",
             method="POST",
             headers={"Content-Type": "application/json"},
             body=json.dumps(payload),
