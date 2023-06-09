@@ -92,6 +92,12 @@ Example full url
 localhost:9080/crawl.json?start_requests=true&spider_name=ee&crawl_arg={"search_term":"iphone"
 ```
 
+### You can specify scrapyrt port by doing this
+
+```sh
+scrapyrt -p <port>
+```
+
 ### Docker
 
 You can run the following command's to download and run the docker image which will also run the scrapyrt.
@@ -99,12 +105,6 @@ You can run the following command's to download and run the docker image which w
 ```sh
 docker pull naviamold/searcher
 docker run -p <port>:8080 <image_id>
-```
-
-### You can specify scrapyrt port by doing this
-
-```sh
-scrapyrt -p <port>
 ```
 
 ## Author
