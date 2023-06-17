@@ -8,6 +8,7 @@ scrapy = "*"
 scrapyrt = "*"
 scrapy-fake-useragent = "*"
 scrapy-rotating-proxies = "*"
+scrapy-splash = "*"
 
 [dev-packages]
 pylint = "*"

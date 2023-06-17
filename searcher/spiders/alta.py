@@ -1,5 +1,7 @@
 import scrapy
 
+# TODO
+
 class AltaSpider(scrapy.Spider):
     name = "alta"
     allowed_domains = ["alta.ge"]

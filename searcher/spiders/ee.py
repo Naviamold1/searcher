@@ -36,7 +36,7 @@ class EeSpider(scrapy.Spider):
                     "title": product["product_desc"],
                     "price": float(product["actual_price"]),
                     "link": f'https://ee.ge/{product["parent_category_slug_gr"]}/{product["category_slug_gr"]}/{product["product_slug_gr"]}',
-                    "images": product["image"],
+                    "thumbnail": product["image"],
                 }
             except:
                 continue

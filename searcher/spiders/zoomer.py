@@ -23,7 +23,8 @@ class ZoommerSpider(scrapy.Spider):
                         .replace(" ", "")
                         .replace(" ", "")
                     ),
-                    "link": f"https://zoommer.ge/{product.css('.product_link::attr(href)')[0].get()}",
+                    "link": f"https://zoommer.ge{product.css('.product_link::attr(href)')[0].get()}",
+                    "thumbnail": product.css(".product_img::attr(data-src)")[0].get(),
                     "images": product.css(".product_img::attr(data-src)").getall(),
                 }
             except ValueError:

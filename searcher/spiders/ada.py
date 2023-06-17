@@ -25,7 +25,7 @@ class AdaSpider(scrapy.Spider):
                     "title": product["name"],
                     "price": float(product["price_with_price_tag"]),
                     "link": f'https://adashop.ge/product/{product["_id"]}',
-                    "images": f'https://adashop.ge/_next/image?url=http%3A%2F%2Flocalhost%3A5001%2Fimages%2Fproducts%2F{product["image"]}&w=640&q=75',
+                    "thumbnail": f'https://adashop.ge/_next/image?url=http%3A%2F%2Flocalhost%3A5001%2Fimages%2Fproducts%2F{product["image"]}&w=640&q=75',
                 }
             except ValueError:
                 continue
