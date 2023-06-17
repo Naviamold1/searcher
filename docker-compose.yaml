@@ -1,0 +1,10 @@
+version: '3'
+services:
+  app:
+    build: .
+    ports:
+      - '9080:8080'
+  splash:
+    image: scrapinghub/splash
+    ports:
+      - '8050:8050'
