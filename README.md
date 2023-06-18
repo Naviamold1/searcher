@@ -1,5 +1,5 @@
 <!-- markdownlint-disable MD033 -->
-<h1 align="center">Welcome to searcher-ge 👋</h1>
+<h1 align="center">Welcome to searcher-scraper 👋</h1>
 <p>
   <a href="https://opensource.org/licenses/MIT" target="_blank">
     <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
@@ -18,16 +18,16 @@ Built with [scrapy](https://scrapy.org/)
 ### Using Pip
 
 ```bash
-git clone https://github.com/Naviamold1/searcher-ge.git
-cd searcher-ge
+git clone https://github.com/Naviamold1/searcher-scraper.git
+cd searcher-scraper
 pip install -r requirements.txt
 ```
 
 ### Using [Pipenv](https://pipenv.pypa.io/en/latest/)
 
 ```bash
-git clone https://github.com/Naviamold1/searcher-ge.git
-cd searcher-ge
+git clone https://github.com/Naviamold1/searcher-scraper.git
+cd searcher-scraper
 pipenv install
 ```
 
