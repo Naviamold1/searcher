@@ -15,7 +15,29 @@ Built with [scrapy](https://scrapy.org/)
 
 ## Install
 
-### Using Pip
+### Installing via [Docker](https://www.docker.com/)
+
+```bash
+git clone https://github.com/Naviamold1/searcher-scraper.git
+docker-compose up -d
+```
+
+This will install, setup and run the project with [scrapyrt](#api) (click to learn more)
+
+### Manual Installation
+
+#### Install Splash
+
+This project uses [scrapy-splash](https://pypi.org/project/scrapy-splash/) for some scraping, therefor to use this project at its full extend we need to install [splash](https://splash.readthedocs.io/en/latest/install.html):
+
+```bash
+docker pull scrapinghub/splash
+docker run -it -p 8050:8050 --rm scrapinghub/splash
+```
+
+After that you can install the project via Pip **OR** [Poetry](#using-poetry)
+
+#### Using Pip
 
 ```bash
 git clone https://github.com/Naviamold1/searcher-scraper.git
@@ -23,12 +45,19 @@ cd searcher-scraper
 pip install -r requirements.txt
 ```
 
-### Using [Pipenv](https://pipenv.pypa.io/en/latest/)
+#### Using [Poetry](https://python-poetry.org/)
 
 ```bash
 git clone https://github.com/Naviamold1/searcher-scraper.git
 cd searcher-scraper
-pipenv install
+poetry shell
+poetry install
+```
+
+If you plan on altering or contributing to this repo you should also install dev dependencies
+
+```sh
+poetry install --with dev
 ```
 
 ## Usage
@@ -57,7 +86,7 @@ scrapy crawl zoommer -o output.json -a search_term="apple watch"
 
 If you want to scrape with proxies:
 
-1. go to [searcher\settings.py](https://github.com/Naviamold1/searcher/blob/d43be643de89297f834276af9ce3482138ff3735/searcher/settings.py) scroll down until you see `DOWNLOADER_MIDDLEWARES` option and uncomment the rotating.proxie lines.
+1. go to [searcher\settings.py](https://github.com/Naviamold1/searcher/blob/d43be643de89297f834276af9ce3482138ff3735/searcher/settings.py) scroll down until you see `DOWNLOADER_MIDDLEWARES` option and uncomment the rotating.proxies lines.
 2. Create `proxies.txt` file in the root folder.
 3. Fill it with your proxies.
 
@@ -96,15 +125,6 @@ localhost:9080/crawl.json?start_requests=true&spider_name=ee&crawl_arg={"search_
 
 ```sh
 scrapyrt -p <port>
-```
-
-### Docker
-
-You can run the following command's to download and run the docker image which will also run the scrapyrt.
-
-```sh
-docker pull naviamold/searcher
-docker run -p <port>:8080 <image_id>
 ```
 
 ## Author
