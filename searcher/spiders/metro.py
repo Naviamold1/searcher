@@ -3,6 +3,7 @@ from scrapy_splash import SplashRequest
 
 # TODO
 
+
 class MetroSpider(scrapy.Spider):
     name = "metro"
     allowed_domains = ["metromart.ge"]

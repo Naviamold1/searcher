@@ -51,7 +51,7 @@ SPIDER_MIDDLEWARES = {
 
 # Splash settings
 SPLASH_URL = "http://localhost:8050/"
-DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
+DUPEFILTER_CLASS = "scrapy_splash.SplashAwareDupeFilter"
 
 
 # Enable or disable downloader middlewares
@@ -69,6 +69,13 @@ DOWNLOADER_MIDDLEWARES = {
 }
 
 ROTATING_PROXY_LIST_PATH = "proxies.txt"
+
+FAKEUSERAGENT_PROVIDERS = [
+    "scrapy_fake_useragent.providers.FakeUserAgentProvider",
+    "scrapy_fake_useragent.providers.FakerProvider",
+    "scrapy_fake_useragent.providers.FixedUserAgentProvider",
+]
+USER_AGENT = "Mozilla/5.0 (Android; Mobile; rv:40.0)"
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
@@ -101,7 +108,7 @@ HTTPCACHE_ENABLED = True
 # HTTPCACHE_EXPIRATION_SECS = 0
 # HTTPCACHE_DIR = "httpcache"
 # HTTPCACHE_IGNORE_HTTP_CODES = []
-HTTPCACHE_STORAGE = 'scrapy_splash.SplashAwareFSCacheStorage'
+HTTPCACHE_STORAGE = "scrapy_splash.SplashAwareFSCacheStorage"
 
 # Set settings whose default value is deprecated to a future-proof value
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"

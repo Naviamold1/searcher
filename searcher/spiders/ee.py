@@ -38,5 +38,5 @@ class EeSpider(scrapy.Spider):
                     "link": f'https://ee.ge/{product["parent_category_slug_gr"]}/{product["category_slug_gr"]}/{product["product_slug_gr"]}',
                     "thumbnail": product["image"],
                 }
-            except:
+            except ValueError:
                 continue

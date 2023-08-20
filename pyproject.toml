@@ -10,7 +10,6 @@ packages = [{include = "searcher_scraper"}]
 [tool.poetry.dependencies]
 python = "^3.11"
 Scrapy = "^2.10.0"
-scrapyrt = "^0.14.0"
 scrapy-fake-useragent = "^1.4.4"
 scrapy-rotating-proxies = "^0.6.2"
 scrapy-splash = "^0.9.0"
@@ -22,6 +21,11 @@ flake8-length = "^0.3.1"
 pre-commit = "^3.3.3"
 black = "^23.7.0"
 isort = "^5.12.0"
+
+
+
+[tool.poetry.group.api.dependencies]
+scrapyrt = "^0.14.0"
 
 [build-system]
 requires = ["poetry-core"]

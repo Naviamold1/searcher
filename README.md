@@ -13,6 +13,22 @@
 
 Built with [scrapy](https://scrapy.org/)
 
+## Store List
+
+| Store Name       | Status | Argument  | Website                 | Notes                                                                                                |
+| ---------------- | ------ | --------- | ----------------------- | ---------------------------------------------------------------------------------------------------- |
+| Alta             | [x]    | alta      | <https://alta.ge/>      | Newly added might be some bugs.                                                                      |
+| Elit Electronics | [x]    | ee        | <https://ee.ge/>        |                                                                                                      |
+| Zoommer          | [x]    | zoommer   | <https://zoommer.ge/>   | On Zoommer's current website if there are multiple pages for a search result it stalks for a bit     |
+| Ada              | [x]    | ada       | <https://adashop.ge/>   | Ada's current search api returns all of there products sometimes if the search term is very specific |
+| Metromart        | [ ]    | metro     | <https://metromart.ge/> | Not working right now, having issues with websites lazy loading                                      |
+| gITec            | [ ]    | gitec     | <https://gitec.ge/>     | Not implemented yet                                                                                  |
+| allmarket        | [ ]    | allmarket | <https://allmarket.ge/> | Not implemented yet                                                                                  |
+| gsshop           | [ ]    | gsshop    | <https://gsshop.ge/>    | Not implemented yet                                                                                  |
+| mymarket         | [ ]    | mymarket  | <https://mymarket.ge/>  | Not implemented yet                                                                                  |
+
+Additional store suggestions are welcome
+
 ## Install
 
 ### Installing via [Docker](https://www.docker.com/)
@@ -54,6 +70,12 @@ poetry shell
 poetry install
 ```
 
+If you plan on using an [API](#api) you should also install api dependencies
+
+```sh
+poetry install --with api
+```
+
 If you plan on altering or contributing to this repo you should also install dev dependencies
 
 ```sh
@@ -68,13 +90,11 @@ run this template command
 scrapy crawl <store> -o <filename>.<json|csv|xml> -a search_term="<product>"
 ```
 
-replace **`<store>`** with the store name like: `ee, ada or zoommer`
+replace **`<store>`** with the store name **argument** which you can get from this [table](#store-list) (e.g. ee, ada, zoommer...)
 
 replace `filename` with the name you want your file to be and choose either `json, csv or xml` as the file extension.
 
 replace **`"<product>"`** with an name of a product you are searching for (e.g iphone)
-
-p.s alta broken rn.
 
 Example full command
 
@@ -103,17 +123,15 @@ just run the following command in the terminal
 scrapyrt
 ```
 
-by default the port is 9080 so navigate to this url in your browser or on API client
+The default scrapyrt port is 9080 so navigate to this url in your browser or in an API client
 
 ```sh
 localhost:9080/crawl.json?start_requests=true&spider_name=<store>&crawl_arg={"search_term":"<product>"}
 ```
 
-replace **`<store>`** with the store name like: `ee, ada or zoommer`
+replace **`<store>`** with the store name **argument** which you can get from this [table](#store-list) (e.g. ee, ada, zoommer...)
 
 also replace **`"<product>"`** with an name of a product you are searching for (e.g iphone)
-
-p.s alta broken rn.
 
 Example full url
 
